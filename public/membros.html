@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><link rel="stylesheet" href="style.css"><title>Equipe</title></head>
+<body onload="checkAuth(); carregarMembros()">
+    <nav>
+        <span style="color:var(--accent); font-weight:bold; margin-right:20px;">SISTEMA CLEAR SKY</span>
+        <a href="dashboard.html">Painel</a> 
+        <a href="stalkers.html">Stalkers</a> 
+        <a href="itens.html">Comércio</a> 
+        <a href="estoque.html">Estoque</a>
+        <a href="enciclopedia.html">Pesquisa</a> 
+        <a href="relatorios.html">Relatórios</a> 
+        <a href="historico.html">Histórico</a> 
+        <a href="missoes.html">Missões</a>
+        <a href="membros.html" id="navAdmin" style="color:var(--accent);">Equipe</a> 
+        <a onclick="logout()" style="color:#e74c3c; margin-left:auto;">Sair</a>
+    </nav>
+    <div class="container">
+        <div class="card">
+            <h3>Gerenciar Pesquisador/Guarda</h3>
+            <form onsubmit="salvarMembro(event)">
+                <input type="hidden" id="editMembroId">
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="mNome" placeholder="Nome Real do Membro" required style="flex:1">
+                    <input type="text" id="mUser" placeholder="Usuário (Login do Sistema)" required style="flex:1">
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <input type="password" id="mPass" placeholder="Senha (Para manter a atual, deixe em branco)" style="flex:1">
+                    <select id="mRole" required style="flex:1">
+                        <option value="operador">Operador (Pesquisador Normal)</option>
+                        <option value="admin">Administrador (Diretor)</option>
+                    </select>
+                </div>
+                <div style="display:flex; gap:10px; margin-top:10px;">
+                    <button type="submit" id="btnSalvarMembro">Conceder Acesso / Atualizar</button>
+                    <button type="button" id="btnCancelarMembro" onclick="cancelarEdicaoMembro()" style="background:#555; display:none;">Cancelar Edição</button>
+                </div>
+            </form>
+        </div>
+        <div id="listaMembros" style="margin-top:20px;"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

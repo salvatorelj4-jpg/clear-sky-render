@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><link rel="stylesheet" href="style.css"><title>Dashboard</title></head>
+<body onload="checkAuth(); carregarDashboard()">
+    <nav>
+        <span style="color:var(--accent); font-weight:bold; margin-right:20px;">SISTEMA Clear Sky</span>
+        <a href="dashboard.html" style="color:var(--accent);">Painel</a> 
+        <a href="stalkers.html">Stalkers</a> 
+        <a href="itens.html">Comércio</a> 
+        <a href="estoque.html">Estoque</a>
+        <a href="enciclopedia.html">Pesquisa</a> 
+        <a href="relatorios.html">Relatórios</a> 
+        <a href="historico.html">Histórico</a> 
+        <a href="missoes.html">Missões</a>
+        <a href="membros.html" id="navAdmin">Equipe</a> 
+        <a onclick="logout()" style="color:#e74c3c; margin-left:auto;">Sair</a>
+    </nav>
+    <div class="container">
+        
+        <div class="card" style="border-top: 3px solid var(--accent);">
+            <h2 style="margin-top:0; font-size:1.8em;">Terminal Principal | Operador: <span id="nomeUsuarioLogado" style="color:var(--accent);">Lendo credencial...</span></h2>
+            <p>Status do Laboratório Móvel de Yantar: <b style="color:var(--accent); text-shadow: 0 0 5px var(--accent);">ONLINE E OPERANTE</b></p>
+        </div>
+        
+        <div style="display:flex; gap:15px; flex-wrap:wrap;">
+            <div class="card" style="flex:1; min-width:200px; text-align:center;">
+                <h3 style="color:#7f8c8d;">Stalkers Registrados</h3>
+                <h1 id="statStalkers" style="font-size:3em; margin:10px 0; color:var(--accent);">0</h1>
+            </div>
+            <div class="card" style="flex:1; min-width:200px; text-align:center;">
+                <h3 style="color:#f1c40f;">Itens no Estoque</h3>
+                <h1 id="statItens" style="font-size:3em; margin:10px 0; color:#f1c40f;">0</h1>
+            </div>
+            <div class="card" style="flex:1; min-width:200px; text-align:center;">
+                <h3 style="color:#e74c3c;">Operações Ativas</h3>
+                <h1 id="statMissoes" style="font-size:3em; margin:10px 0; color:#e74c3c;">0</h1>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 style="color:#3498db;">Agente de Maior Confiança</h3>
+            <p style="font-size:1.5em; font-weight:bold;" id="statTop">Nenhum</p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

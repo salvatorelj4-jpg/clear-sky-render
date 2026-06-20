@@ -1,0 +1,166 @@
+:root {
+    --bg: #0b111a; /* Azul escuro militar de fundo */
+    --card: rgba(26, 36, 50, 0.85); /* Painéis em azul acinzentado */
+    --text: #ecf0f1;
+    --accent: #00b4d8; /* Azul celeste brilhante da Clear Sky */
+    --border: rgba(0, 180, 216, 0.2); /* Bordas azuis suaves */
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg);
+    background-image:
+        linear-gradient(rgba(0, 180, 216, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 180, 216, 0.04) 1px, transparent 1px),
+        radial-gradient(circle at center, #14213d 0%, #0b111a 100%); /* Gradiente azulado central */
+    background-size: 40px 40px, 40px 40px, 100% 100%;
+    background-attachment: fixed;
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+    position: relative;
+    min-height: 100vh;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px);
+    pointer-events: none;
+    z-index: 9999;
+}
+
+nav {
+    background: rgba(11, 17, 26, 0.95);
+    padding: 15px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    border-bottom: 2px solid var(--accent);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+nav span {
+    display: flex !important;
+    align-items: center;
+    gap: 12px;
+}
+
+nav span::before {
+    content: "";
+    display: inline-block;
+    width: 45px;
+    height: 45px;
+    background-image: url('logo.jpg');
+    background-size: cover;
+    background-position: center;
+    border-radius: 50%; 
+    border: 2px solid var(--accent); 
+    box-shadow: 0 0 10px rgba(0, 180, 216, 0.4); /* Brilho azul na logo */
+}
+
+nav a { color: #fff; text-decoration: none; cursor: pointer; font-weight: bold; font-size: 0.9em; text-transform: uppercase; transition: 0.2s; }
+nav a:hover { color: var(--accent); text-shadow: 0 0 8px var(--accent); }
+
+.container { max-width: 1000px; margin: 30px auto; padding: 0 15px; }
+
+.card {
+    background: var(--card);
+    backdrop-filter: blur(5px);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+input, select, textarea { width: 100%; padding: 10px; margin-bottom: 10px; background: rgba(0, 0, 0, 0.6); border: 1px solid var(--border); color: #fff; border-radius: 4px; box-sizing: border-box; font-family: inherit; }
+input:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 8px rgba(0, 180, 216, 0.3); }
+
+button { padding: 10px 15px; background: var(--accent); color: #000; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; width: 100%; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; }
+button:hover { opacity: 0.9; box-shadow: 0 0 15px rgba(0, 180, 216, 0.5); }
+hr { border: 1px solid var(--border); margin: 15px 0; }
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; box-shadow: 0 0 10px #e74c3c; }
+    100% { opacity: 1; }
+}
+
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px);
+    display: flex; justify-content: center; align-items: center; z-index: 10000;
+}
+.modal-content {
+    background: #0b111a; border: 2px solid var(--accent);
+    max-width: 600px; width: 90%; padding: 25px; border-radius: 8px;
+    position: relative; box-shadow: 0 0 40px rgba(0, 180, 216, 0.2);
+}
+.fechar-modal {
+    position: absolute; top: 10px; right: 15px; font-size: 1.8em;
+    color: #e74c3c; cursor: pointer; font-weight: bold; transition: 0.2s;
+}
+.fechar-modal:hover { color: #fff; transform: scale(1.2); }
+
+.foto-clicavel { cursor: pointer; transition: 0.3s; }
+.foto-clicavel:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--accent); }
+
+.papel-relatorio { position: relative; width: 100%; max-width: 1200px; aspect-ratio: 16 / 9; background-image: url('fundo-relatorio.png'); background-size: 100% 100%; background-position: center; background-repeat: no-repeat; font-family: 'Courier New', Courier, monospace; color: #1a1a1a; margin: 20px auto; box-shadow: 0px 15px 40px rgba(0,0,0,0.8); background-color: #d1c8b4; overflow: hidden; }
+.relatorio-header { position: absolute; top: 4%; left: 0; width: 100%; text-align: center; }
+.relatorio-header h2 { margin: 0; font-size: 1.3vw; color: #222; letter-spacing: 1px; }
+.relatorio-meta { position: absolute; top: 10%; left: 19%; width: 75%; text-align: left; line-height: 1.3; }
+.relatorio-meta p { margin: 2px 0; font-size: 0.8vw; font-weight: bold; }
+.relatorio-objetivo { position: absolute; top: 21%; left: 10%; width: 75%; text-align: left; font-size: 1vw; font-weight: bold; }
+.relatorio-body { position: absolute; top: 26%; left: 5%; width: 90%; height: 60%; display: grid; grid-template-columns: 30% 30% 30%; justify-content: space-between; font-size: 0.8vw; line-height: 1.3; text-align: justify; }
+.relatorio-body div { white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word; padding: 0 10px; overflow-y: auto; }
+.relatorio-body div::-webkit-scrollbar { width: 4px; }
+.relatorio-body div::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 5px; }
+.relatorio-editado { position: absolute; bottom: 2%; right: 2%; color: #c0392b; border: 2px solid #c0392b; padding: 5px; font-weight: bold; transform: rotate(-3deg); font-size: 0.9vw; opacity: 0.8; }
+
+/* ==========================================
+   TELA DE CARREGAMENTO (BOOT SOVIÉTICO) 
+   ========================================== */
+#nuclear-loader {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: radial-gradient(circle at center, #0e1a24 0%, #000000 100%);
+    z-index: 100000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 1s ease-out;
+    color: var(--accent);
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.simbolo-nuclear {
+    font-size: 120px;
+    color: #3a86ff; /* Azul elétrico para o boot */
+    text-shadow: 0 0 40px rgba(58, 134, 255, 0.8);
+    animation: rotacao-nuclear 4s linear infinite;
+    margin-bottom: 20px;
+    line-height: 1;
+}
+
+@keyframes rotacao-nuclear {
+    100% { transform: rotate(360deg); }
+}
+
+.texto-loader {
+    font-size: 1.8em;
+    font-weight: bold;
+    letter-spacing: 3px;
+    text-shadow: 0 0 15px var(--accent);
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.log-loader {
+    color: #7f8c8d;
+    font-size: 1.1em;
+    animation: pulse 1.5s infinite;
+}

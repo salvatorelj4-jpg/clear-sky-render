@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><link rel="stylesheet" href="style.css"><title>Relatórios de Expedição</title></head>
+<body onload="checkAuth(); carregarRelatorios()">
+    <nav>
+        <span style="color:var(--accent); font-weight:bold; margin-right:20px;">SISTEMA CLEAR SKY</span>
+        <a href="dashboard.html">Painel</a> 
+        <a href="stalkers.html">Stalkers</a> 
+        <a href="itens.html">Comércio</a> 
+        <a href="estoque.html">Estoque</a>
+        <a href="enciclopedia.html">Pesquisa</a> 
+        <a href="relatorios.html" style="color:var(--accent);">Relatórios</a> 
+        <a href="historico.html">Histórico</a> 
+        <a href="missoes.html">Missões</a>
+        <a href="membros.html" id="navAdmin">Equipe</a> 
+        <a onclick="logout()" style="color:#e74c3c; margin-left:auto;">Sair</a>
+    </nav>
+    <div class="container">
+        
+        <div id="painelGerenciamento">
+            <div class="card">
+                <h3 id="tituloFormRel">Redigir Novo Relatório de Expedição</h3>
+                <form onsubmit="salvarRelatorio(event)">
+                    <input type="hidden" id="editRelatorioId">
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" id="rNum" placeholder="Nº da Expedição" required style="flex:1">
+                        <input type="text" id="rAutor" placeholder="Nome e Título do Autor" required style="flex:2">
+                    </div>
+                    
+                    <input type="text" id="rObj" placeholder="Objetivo da Missão" required style="margin-top:10px;">
+                    
+                    <label style="color:var(--accent); font-weight:bold; margin-top:10px; display:block;">Relato Técnico (3 Colunas):</label>
+                    <div style="display:flex; gap:10px; margin-top:5px;">
+                        <textarea id="rCol1" placeholder="Coluna 1..." style="flex:1; height:200px;"></textarea>
+                        <textarea id="rCol2" placeholder="Coluna 2..." style="flex:1; height:200px;"></textarea>
+                        <textarea id="rCol3" placeholder="Coluna 3..." style="flex:1; height:200px;"></textarea>
+                    </div>
+                    <div style="display:flex; gap:10px; margin-top:15px;">
+                        <button type="submit" id="btnSalvarRel">ARQUIVAR RELATÓRIO</button>
+                        <button type="button" id="btnCancelarRel" onclick="cancelarEdicaoRelatorio()" style="background:#555; display:none;">CANCELAR</button>
+                    </div>
+                </form>
+            </div>
+            <h3 style="margin-top:20px; border-bottom:1px solid #333; padding-bottom:10px;">Base de Dados Confidencial</h3>
+            <div id="listaRelatorios"></div>
+        </div>
+
+        <div id="painelVisualizacao" style="display:none;">
+            <button onclick="fecharRelatorio()" style="background:#e74c3c; width:auto; margin-bottom:20px;">&larr; VOLTAR AO ARQUIVO</button>
+            
+            <div class="papel-relatorio">
+                <div class="relatorio-header"><span id="vNum"></span></div>
+                <div class="relatorio-meta"><span id="vAutor"></span></div>
+                <div class="relatorio-objetivo"><span id="vObj"></span></div>
+                <div class="relatorio-body">
+                    <div id="vCol1"></div><div id="vCol2"></div><div id="vCol3"></div>
+                </div>
+                <div id="vCarimboEditado" class="relatorio-editado" style="display:none;">DOCUMENTO RETIFICADO POR:<br><span id="vNomeEditor"></span></div>
+            </div>
+        </div>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
