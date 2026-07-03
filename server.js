@@ -11,6 +11,13 @@ const dotenv = require('dotenv');
 // Carregar variáveis de ambiente
 dotenv.config();
 
+// Validar variáveis essenciais
+if (!process.env.TURSO_CONNECTION_URL || !process.env.TURSO_AUTH_TOKEN) {
+    console.error('❌ ERRO: Variáveis TURSO_CONNECTION_URL e TURSO_AUTH_TOKEN são obrigatórias!');
+    console.error('Configure-as no Render Dashboard → Environment');
+    process.exit(1);
+}
+
 if (!fs.existsSync('./uploads')) { fs.mkdirSync('./uploads'); }
 
 const app = express();
@@ -19,6 +26,9 @@ const SECRET = process.env.JWT_SECRET || "ECO_LAB_SECURE_2026";
 // ===================================================
 // INICIALIZAR CLIENTE TURSO
 // ===================================================
+console.log('🔗 Conectando ao Turso...');
+console.log('URL:', process.env.TURSO_CONNECTION_URL);
+
 const db = createClient({
     url: process.env.TURSO_CONNECTION_URL,
     authToken: process.env.TURSO_AUTH_TOKEN,
@@ -40,20 +50,20 @@ const upload = multer({ storage });
 // ===================================================
 async function inicializarBD() {
     try {
-        // Criar tabelas se não existirem
-        await db.execute(`
-            CREATE TABLE IF NOT EXISTS usuarios (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+        console.log('📝 Criando tabelas no Turso...');
+        
+        // Criar tabelas se não existirem - usando sintaxe LibSQL compatível
+        const sqls = [
+            `CREATE TABLE IF NOT EXISTS usuarios (
+                id INTEGER PRIMARY KEY,
                 nome TEXT,
                 usuario TEXT UNIQUE,
                 senha TEXT,
                 role TEXT
-            )
-        `);
+            )`,
 
-        await db.execute(`
-            CREATE TABLE IF NOT EXISTS stalkers (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+            `CREATE TABLE IF NOT EXISTS stalkers (
+                id INTEGER PRIMARY KEY,
                 nome TEXT,
                 codinome TEXT,
                 faccao TEXT,
@@ -69,34 +79,27 @@ async function inicializarBD() {
                 relacoes_faccoes TEXT,
                 status_lista_negra INTEGER DEFAULT 0,
                 motivo_lista_negra TEXT
-            )
-        `);
+            )`,
 
-        await db.execute(`
-            CREATE TABLE IF NOT EXISTS historico (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+            `CREATE TABLE IF NOT EXISTS historico (
+                id INTEGER PRIMARY KEY,
                 stalker_id INTEGER,
                 alteracao INTEGER,
                 motivo TEXT,
-                data DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (stalker_id) REFERENCES stalkers(id)
-            )
-        `);
+                data DATETIME DEFAULT CURRENT_TIMESTAMP
+            )`,
 
-        await db.execute(`
-            CREATE TABLE IF NOT EXISTS itens (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+            `CREATE TABLE IF NOT EXISTS itens (
+                id INTEGER PRIMARY KEY,
                 nome TEXT,
                 preco_base REAL,
                 nivel_piaget INTEGER DEFAULT 1,
                 categoria TEXT DEFAULT 'Equipamentos',
                 foto TEXT DEFAULT 'default.jpg'
-            )
-        `);
+            )`,
 
-        await db.execute(`
-            CREATE TABLE IF NOT EXISTS missoes (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+            `CREATE TABLE IF NOT EXISTS missoes (
+                id INTEGER PRIMARY KEY,
                 titulo TEXT,
                 descricao TEXT,
                 recompensa_rep INTEGER,
@@ -107,14 +110,11 @@ async function inicializarBD() {
                 stalkers_ids TEXT DEFAULT '[]',
                 concluidos_ids TEXT DEFAULT '[]',
                 dificuldade TEXT DEFAULT 'Fácil',
-                temporaria INTEGER DEFAULT 0,
-                FOREIGN KEY (stalker_id) REFERENCES stalkers(id)
-            )
-        `);
+                temporaria INTEGER DEFAULT 0
+            )`,
 
-        await db.execute(`
-            CREATE TABLE IF NOT EXISTS relatorios (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+            `CREATE TABLE IF NOT EXISTS relatorios (
+                id INTEGER PRIMARY KEY,
                 numero TEXT,
                 autor TEXT,
                 membros TEXT,
@@ -124,38 +124,64 @@ async function inicializarBD() {
                 col3 TEXT,
                 editado_por TEXT,
                 data DATETIME DEFAULT CURRENT_TIMESTAMP
-            )
-        `);
+            )`,
 
-        await db.execute(`
-            CREATE TABLE IF NOT EXISTS pesquisas (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+            `CREATE TABLE IF NOT EXISTS pesquisas (
+                id INTEGER PRIMARY KEY,
                 titulo TEXT,
                 classificacao TEXT,
                 descricao TEXT,
                 autor TEXT,
                 data DATETIME DEFAULT CURRENT_TIMESTAMP,
                 foto TEXT DEFAULT 'default.jpg'
-            )
-        `);
+            )`,
 
-        await db.execute(`
-            CREATE TABLE IF NOT EXISTS configuracoes (
+            `CREATE TABLE IF NOT EXISTS configuracoes (
                 chave TEXT PRIMARY KEY,
                 valor TEXT
-            )
-        `);
+            )`
+        ];
+
+        // Executar cada CREATE TABLE
+        for (const sql of sqls) {
+            try {
+                await db.execute(sql);
+            } catch (e) {
+                if (!e.message.includes('already exists')) {
+                    console.error('Erro ao criar tabela:', e.message);
+                }
+            }
+        }
 
         // Inserir admin padrão
         const pass = bcrypt.hashSync('25072507', 10);
-        await db.execute(
-            `INSERT OR IGNORE INTO usuarios (nome, usuario, senha, role) VALUES (?, ?, ?, ?)`,
-            ['Administrador', 'admin', pass, 'admin']
-        );
+        try {
+            await db.execute(
+                `INSERT OR IGNORE INTO usuarios (nome, usuario, senha, role) VALUES (?, ?, ?, ?)`,
+                ['Administrador', 'admin', pass, 'admin']
+            );
+        } catch (e) {
+            if (!e.message.includes('UNIQUE constraint failed')) {
+                console.error('Erro ao inserir admin:', e.message);
+            }
+        }
 
         console.log('✅ Banco de dados Turso inicializado com sucesso!');
+        return true;
     } catch (error) {
-        console.error('❌ Erro ao inicializar banco de dados:', error);
+        console.error('❌ Erro ao inicializar banco de dados:', error.message);
+        if (error.message.includes('401')) {
+            console.error('\n🔑 ERRO DE AUTENTICAÇÃO:');
+            console.error('- Token Turso inválido ou expirado');
+            console.error('- Verifique TURSO_AUTH_TOKEN no Render Environment');
+            console.error('- Regenere o token em: https://console.turso.tech');
+        }
+        if (error.message.includes('400')) {
+            console.error('\n⚠️ ERRO DE SINTAXE SQL:');
+            console.error('- Verifique a sintaxe SQL das tabelas');
+            console.error('- Turso usa SQLite, mas com algumas limitações');
+        }
+        return false;
     }
 }
 
@@ -875,10 +901,15 @@ app.put('/api/config/taxas', auth, async (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 (async () => {
-    await inicializarBD();
-    app.listen(PORT, "0.0.0.0", () => {
-        console.log(`✅ Servidor Clear Sky online em http://localhost:${PORT}`);
-        console.log(`🔗 Banco de dados: Turso`);
-        console.log(`📡 URL: ${process.env.TURSO_CONNECTION_URL}`);
-    });
+    const dbOk = await inicializarBD();
+    if (dbOk) {
+        app.listen(PORT, "0.0.0.0", () => {
+            console.log(`✅ Servidor Clear Sky online em http://localhost:${PORT}`);
+            console.log(`🔗 Banco de dados: Turso`);
+            console.log(`📡 URL: ${process.env.TURSO_CONNECTION_URL}`);
+        });
+    } else {
+        console.error('🛑 Falha ao conectar ao banco de dados. Verificar configurações de ambiente.');
+        process.exit(1);
+    }
 })();
