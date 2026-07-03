@@ -1,0 +1,9 @@
+node_modules/
+uploads/
+.env
+.env.local
+.env.*.local
+*.log
+.DS_Store
+database.db
+.turso/

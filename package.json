@@ -1,7 +1,7 @@
 {
   "name": "sistema-clear-sky",
-  "version": "1.0.0",
-  "description": "Sistema de gerenciamento de stalkers e reputação para rede local",
+  "version": "2.0.0",
+  "description": "Sistema de gerenciamento de stalkers e reputação para rede local - Powered by Turso",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -13,7 +13,7 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
     "multer": "^1.4.5-lts.1",
-    "sqlite3": "^5.1.6"
+    "@libsql/client": "^0.5.6"
   },
   "author": "Laboratório Clear Sky",
   "license": "ISC"
